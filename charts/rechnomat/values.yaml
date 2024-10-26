@@ -1,43 +1,33 @@
-# Default values for rechnomat.
-# This is a YAML-formatted file.
-# Declare variables to be passed into your templates.
-
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: localhost:5000/rechnomat:latest
+  tag: latest
   pullPolicy: IfNotPresent
-  # Overrides the image tag whose default is the chart appVersion.
-  tag: ""
 
-imagePullSecrets: []
-nameOverride: ""
-fullnameOverride: ""
-
-serviceAccount:
-  # Specifies whether a service account should be created
-  create: true
-  # Automatically mount a ServiceAccount's API credentials?
-  automount: true
-  # Annotations to add to the service account
-  annotations: {}
-  # The name of the service account to use.
-  # If not set and create is true, a name is generated using the fullname template
-  name: ""
-
-podAnnotations: {}
-podLabels: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
+application:
+  name: your-app
+  port: 8080
+  env:
+    # Параметры для первой базы данных
+    DATABASE_DEV_HOST: postgres-dev
+    DATABASE_DEV_PORT: "5432"
+    DATABASE_DEV_USER: postgres
+    DATABASE_DEV_PASSWORD: "{{ .Values.database.devPassword }}"
+    DATABASE_DEV_NAME: dev_db
+    # Параметры для второй базы данных
+    DATABASE_IT_HOST: postgres-it
+    DATABASE_IT_PORT: "5432"
+    DATABASE_IT_USER: postgres
+    DATABASE_IT_PASSWORD: "{{ .Values.database.itPassword }}"
+    DATABASE_IT_NAME: it_db
+    # Остальные переменные среды
+    KEYCLOAK_URL: http://keycloak:8080
+    DOVECOT_HOST: dovecot
+    DOVECOT_PORT: "143"
+    WEBDAV_HOST: webdav
+    WEBDAV_PORT: "80"
+    # Добавьте другие переменные среды по необходимости
 
 service:
   type: ClusterIP
@@ -45,63 +35,42 @@ service:
 
 ingress:
   enabled: false
-  className: ""
+  hostname: rechnomat
   annotations: {}
-    # kubernetes.io/ingress.class: nginx
-    # kubernetes.io/tls-acme: "true"
-  hosts:
-    - host: chart-example.local
-      paths:
-        - path: /
-          pathType: ImplementationSpecific
-  tls: []
-  #  - secretName: chart-example-tls
-  #    hosts:
-  #      - chart-example.local
+  tls: false
+  tlsSecret: ""
 
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
+database:
+  devPassword: postgres_password  # Пароль для postgres-dev
+  itPassword: postgres_it_password  # Пароль для postgres-it
 
-livenessProbe:
-  httpGet:
-    path: /
-    port: http
-readinessProbe:
-  httpGet:
-    path: /
-    port: http
+postgresql:
+  image: postgres:13
+  storageSize: 1Gi
 
-autoscaling:
-  enabled: false
-  minReplicas: 1
-  maxReplicas: 100
-  targetCPUUtilizationPercentage: 80
-  # targetMemoryUtilizationPercentage: 80
+keycloak:
+  image: quay.io/keycloak/keycloak:latest
+  adminUser: admin
+  adminPassword: admin_password  # Замените на безопасный пароль
 
-# Additional volumes on the output Deployment definition.
-volumes: []
-# - name: foo
-#   secret:
-#     secretName: mysecret
-#     optional: false
+dovecot:
+  image: dovecot/dovecot:latest  # Замените на ваш Docker-образ Dovecot
+  storageSize: 1Gi
 
-# Additional volumeMounts on the output Deployment definition.
-volumeMounts: []
-# - name: foo
-#   mountPath: "/etc/foo"
-#   readOnly: true
+webdav:
+  image: bytemark/webdav
+  username: webdav_user
+  password: webdav_password  # Замените на безопасный пароль
+  storageSize: 1Gi
 
-nodeSelector: {}
+mailpit:
+  image: axllent/mailpit
 
-tolerations: []
+serviceAccount:
+  create: true
+  name: rechnomat-service-account
+  automount: true
+  annotations:
+    example.com/annotation: "value"
 
-affinity: {}
+

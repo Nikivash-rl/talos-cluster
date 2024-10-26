@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: dovecot-config
+data:
+  dovecot.conf: |
+    # Ваши настройки Dovecot
+    protocols = imap
+    mail_location = maildir:~/Maildir
+    ssl = no

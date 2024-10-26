@@ -1,0 +1,39 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: {{ include "argocd-config.fullname" . }}
+  labels:
+      {{- include "argocd-config.labels" . | nindent 4 }}
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  goTemplate: true
+  goTemplateOptions: [ "missingkey=zero" ]
+  generators:
+    - git:
+        repoURL: {{ .Values.git.repository }}
+        revision: {{ .Values.git.revision }}
+        files:
+          - path: "charts/**/argocd-config.json"
+  template:
+    metadata:
+      finalizers:
+        - resources-finalizer.argocd.argoproj.io
+      name: {{ `{{ .path.basename }}` | quote }}
+    spec:
+      project: "default"
+      source:
+        repoURL: {{ .Values.git.repository }}
+        targetRevision: {{ .Values.git.revision }}
+        path: {{ `{{ .path.path }}` | quote }}
+        helm:
+          version: v3
+          releaseName: {{ `{{ .path.basename }}` | quote }}
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: {{ `{{ default "%s" .namespace }}` | quote }}
+      syncPolicy:
+        automated: {}
+        syncOptions:
+          - CreateNamespace={{ `{{ default "true" .createNamespace }}` }}
+          - ServerSideApply={{ `{{ default "false" .serverSideApply }}` }}

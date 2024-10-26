@@ -1,0 +1,5 @@
+git:
+  repository: https://github.com/Nikivash-rl/talos-cluster.git
+  revision: main
+service:
+  port: 443

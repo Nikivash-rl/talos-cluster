@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: postgres-it-secrets
+type: Opaque
+data:
+  POSTGRES_PASSWORD: {{ .Values.database.itPassword | b64enc }}
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-it
+  labels:
+    app: postgres-it
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-it
+  template:
+    metadata:
+      labels:
+        app: postgres-it
+    spec:
+      containers:
+        - name: postgres
+          image: {{ .Values.postgresql.image }}
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-it-secrets
+                  key: POSTGRES_PASSWORD
+            - name: POSTGRES_DB
+              value: it_db
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-it-pvc
+
+---
+
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-it-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: {{ .Values.postgresql.storageSize }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-it
+  labels:
+    app: postgres-it
+spec:
+  type: ClusterIP
+  selector:
+    app: postgres-it
+  ports:
+    - port: 5432
+      targetPort: 5432
