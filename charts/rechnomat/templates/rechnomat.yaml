@@ -39,5 +39,10 @@ spec:
     app: {{ .Values.application.name }}
   ports:
     - name: http
-      port: {{ .Values.service.port }}
-      targetPort: {{ .Values.application.port }}
+      port: 8080        # Порт сервиса внутри кластера
+      targetPort: 8080  # Порт контейнера
+      nodePort: 38080   # Порт на узле
+    - name: https
+      port: 9001        # Порт сервиса внутри кластера
+      targetPort: 9001  # Порт контейнера
+      nodePort: 39001   # Порт на узле

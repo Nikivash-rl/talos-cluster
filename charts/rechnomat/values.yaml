@@ -6,7 +6,7 @@ image:
   pullPolicy: IfNotPresent
 
 application:
-  name: your-app
+  name: rechnomat
   port: 8080
   env:
     # Параметры для первой базы данных
