@@ -9,7 +9,7 @@ image:
 
 application:
   name: rechnomat
-  port: 8080
+  port: 9001
   env:
     # Параметры для первой базы данных
     DATABASE_DEV_HOST: postgres-dev
@@ -33,7 +33,7 @@ application:
 
 service:
   type: ClusterIP
-  port: 80
+  port: 9001
 
 ingress:
   enabled: false
