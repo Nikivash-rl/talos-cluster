@@ -1,8 +1,10 @@
 replicaCount: 1
 
 image:
-  repository: localhost:5000/rechnomat:latest
+  repository: nikivash/rechnomat:latest
   tag: latest
+  pullSecrets:
+    name: docker-private-image
   pullPolicy: IfNotPresent
 
 application:

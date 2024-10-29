@@ -25,6 +25,8 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
         {{- end }}
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets.name}}
 
 ---
 apiVersion: v1
