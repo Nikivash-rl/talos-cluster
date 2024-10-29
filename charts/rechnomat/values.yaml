@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: nikivash/rechnomat:latest
+  repository: nikivash/rechnomat
   tag: latest
   pullSecrets:
     name: docker-private-image
