@@ -1,66 +1,69 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: dovecot
+  name: {{ .Values.dovecot.name }}
   labels:
-    app: dovecot
+    app: {{ .Values.dovecot.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.dovecot.replicaCount }}
   selector:
     matchLabels:
-      app: dovecot
+      app: {{ .Values.dovecot.name }}
   template:
     metadata:
       labels:
-        app: dovecot
+        app: {{ .Values.dovecot.name }}
     spec:
       containers:
-        - name: dovecot
+        - name: {{ .Values.dovecot.name }}
           image: {{ .Values.dovecot.image }}
           ports:
-            - containerPort: 143  # IMAP
             - containerPort: 993  # IMAPS
+            - containerPort: 110  # POP3
+            - containerPort: 143  # IMAP
+            - containerPort: 25   # SMTP
           volumeMounts:
-            - name: dovecot-config
-              mountPath: /etc/dovecot/dovecot.conf
-              subPath: dovecot.conf
-            - name: dovecot-mail
-              mountPath: /var/mail
+            - name: dovecot-data
+              mountPath: /var/lib/dovecot
       volumes:
-        - name: dovecot-config
-          configMap:
-            name: dovecot-config
-        - name: dovecot-mail
+        - name: dovecot-data
           persistentVolumeClaim:
             claimName: dovecot-pvc
-
 ---
-
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: dovecot-pvc
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: {{ .Values.dovecot.storageSize }}
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: dovecot
+  name: {{ .Values.dovecot.name }}
   labels:
-    app: dovecot
+    app: {{ .Values.dovecot.name }}
 spec:
-  type: ClusterIP
-  selector:
-    app: dovecot
   ports:
-    - port: 143
-      targetPort: 143
     - port: 993
       targetPort: 993
+      protocol: TCP
+      name: imaps
+    - port: 110
+      targetPort: 110
+      protocol: TCP
+      name: pop3
+    - port: 143
+      targetPort: 143
+      protocol: TCP
+      name: imap
+    - port: 25
+      targetPort: 25
+      protocol: TCP
+      name: smtp
+  selector:
+    app: {{ .Values.dovecot.name }}

@@ -11,68 +11,62 @@ application:
   name: rechnomat
   port: 9001
   env:
-    # Параметры для первой базы данных
-    DATABASE_DEV_HOST: postgres-dev
-    DATABASE_DEV_PORT: "5432"
-    DATABASE_DEV_USER: postgres
-    DATABASE_DEV_PASSWORD: "{{ .Values.database.devPassword }}"
-    DATABASE_DEV_NAME: dev_db
-    # Параметры для второй базы данных
-    DATABASE_IT_HOST: postgres-it
-    DATABASE_IT_PORT: "5432"
-    DATABASE_IT_USER: postgres
-    DATABASE_IT_PASSWORD: "{{ .Values.database.itPassword }}"
-    DATABASE_IT_NAME: it_db
-    # Остальные переменные среды
-    KEYCLOAK_URL: http://keycloak:8080
-    DOVECOT_HOST: dovecot
-    DOVECOT_PORT: "143"
-    WEBDAV_HOST: webdav
+    DB_DEV_URL: "jdbc:postgresql://postgres-dev"
+    DB_DEV_PORT: "5432"
+    DB_DEV_NAME: "dev-db"
+    DB_DEV_USER: "postgres"
+
+    DB_IT_URL: "jdbc:postgresql://postgres-it"
+    DB_IT_PORT: "5432"
+    DB_IT_NAME: "it-db"
+    DB_IT_USER: "postgres"
+
+    KEYCLOAK_URL: "http://keycloak:8080"
+    KEYCLOAK_ADMIN_USERNAME: "admin"
+    KEYCLOAK_REALM: "SpringBootKeycloak"
+    KEYCLOAK_CLIENT_ID: "admin-cli"
+
+    WEBDAV_HOST: "webdav"
     WEBDAV_PORT: "80"
-    # Добавьте другие переменные среды по необходимости
+    WEBDAV_USER: "webdav_user"
+
+    #        MAIL_SENDER: "buchhaltung@denktmit.de"
+    #        MAIL_SMTP_HOST: "mailpit"
+    #        MAIL_SMTP_PORT: "1025"
+    #        MAIL_IMAP_HOST: "dovecot"
+    #        MAIL_IMAP_PORT: "993"
+    #        MAIL_USERNAME: "hallo@denktmit.de"
+    #        MAIL_PASSWORD: "pass"
+
+  secrets:
+    DB_DEV_PASS: "dev_db_password"
+    DB_IT_PASS: "it_db_password"
+    KEYCLOAK_ADMIN_PASSWORD: "admin"
+    WEBDAV_PASS: "webdav_pass"
 
 service:
   type: ClusterIP
   port: 9001
 
-ingress:
-  enabled: false
-  hostname: rechnomat
-  annotations: {}
-  tls: false
-  tlsSecret: ""
-
-database:
-  devPassword: postgres_password  # Пароль для postgres-dev
-  itPassword: postgres_it_password  # Пароль для postgres-it
-
 postgresql:
-  image: postgres:13
+  image: postgres:16.0
   storageSize: 1Gi
 
-keycloak:
-  image: quay.io/keycloak/keycloak:latest
-  adminUser: admin
-  adminPassword: admin_password  # Замените на безопасный пароль
-
 dovecot:
+  name: dovecot
+  replicaCount: 1
   image: dovecot/dovecot:latest  # Замените на ваш Docker-образ Dovecot
   storageSize: 1Gi
 
 webdav:
   image: bytemark/webdav
-  username: webdav_user
-  password: webdav_password  # Замените на безопасный пароль
   storageSize: 1Gi
 
 mailpit:
   image: axllent/mailpit
 
-serviceAccount:
-  create: true
-  name: rechnomat-service-account
-  automount: true
-  annotations:
-    example.com/annotation: "value"
+keycloak:
+  image: quay.io/keycloak/keycloak:latest
+
 
 

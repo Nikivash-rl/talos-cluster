@@ -1,13 +1,51 @@
-{{- if .Values.serviceAccount.create -}}
-apiVersion: v1
-kind: ServiceAccount
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: {{ include "rechnomat.serviceAccountName" . }}
+  name: keycloak
   labels:
-    {{- include "rechnomat.labels" . | nindent 4 }}
-  {{- with .Values.serviceAccount.annotations }}
-  annotations:
-    {{- toYaml . | nindent 4 }}
-  {{- end }}
-automountServiceAccountToken: {{ .Values.serviceAccount.automount }}
-{{- end }}
+    app: keycloak
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: keycloak
+  template:
+    metadata:
+      labels:
+        app: keycloak
+    spec:
+      containers:
+        - name: keycloak
+          image: {{ .Values.keycloak.image }}
+          ports:
+            - containerPort: 9990
+              hostPort: 9990
+              protocol: TCP
+          env:
+            - name: KEYCLOAK_ADMIN
+              value: {{ .Values.application.env.KEYCLOAK_ADMIN_USERNAME | quote }}
+            - name: KEYCLOAK_ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: rechnomat-secrets
+                  key: KEYCLOAK_ADMIN_PASSWORD
+          - name: KEYCLOAK_REALM
+            value: {{ .Values.application.env.KEYCLOAK_REALM | quote }}
+          - name: KEYCLOAK_CLIENT_ID
+            value: {{ .Values.application.env.KEYCLOAK_CLIENT_ID | quote }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: keycloak
+  labels:
+    app: keycloak
+spec:
+  ports:
+    - port: 9990
+      targetPort: 9990
+      protocol: TCP
+      name: http
+  selector:
+    app: keycloak
+
