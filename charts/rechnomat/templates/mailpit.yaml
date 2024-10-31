@@ -1,40 +1,41 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: mailpit
+  name: {{ .Values.mailpit.name }}
   labels:
-    app: mailpit
+    app: {{ .Values.mailpit.name }}
 spec:
-  replicas: 1
+  replicas: {{ .Values.mailpit.replicaCount }}
   selector:
     matchLabels:
-      app: mailpit
+      app: {{ .Values.mailpit.name }}
   template:
     metadata:
       labels:
-        app: mailpit
+        app: {{ .Values.mailpit.name }}
     spec:
       containers:
-        - name: mailpit
+        - name: {{ .Values.mailpit.name }}
           image: {{ .Values.mailpit.image }}
           ports:
             - containerPort: 1025  # SMTP
             - containerPort: 8025  # Web UI
-
 ---
-
 apiVersion: v1
 kind: Service
 metadata:
-  name: mailpit
+  name: {{ .Values.mailpit.name }}
   labels:
-    app: mailpit
+    app: {{ .Values.mailpit.name }}
 spec:
-  type: ClusterIP
-  selector:
-    app: mailpit
   ports:
     - port: 1025
       targetPort: 1025
+      protocol: TCP
+      name: smtp
     - port: 8025
       targetPort: 8025
+      protocol: TCP
+      name: web
+  selector:
+    app: {{ .Values.mailpit.name }}
