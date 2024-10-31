@@ -29,10 +29,10 @@ spec:
                 secretKeyRef:
                   name: rechnomat-secrets
                   key: KEYCLOAK_ADMIN_PASSWORD
-          - name: KEYCLOAK_REALM
-            value: {{ .Values.application.env.KEYCLOAK_REALM | quote }}
-          - name: KEYCLOAK_CLIENT_ID
-            value: {{ .Values.application.env.KEYCLOAK_CLIENT_ID | quote }}
+            - name: KEYCLOAK_REALM
+              value: {{ .Values.application.env.KEYCLOAK_REALM | quote }}
+            - name: KEYCLOAK_CLIENT_ID
+              value: {{ .Values.application.env.KEYCLOAK_CLIENT_ID | quote }}
 ---
 apiVersion: v1
 kind: Service
@@ -48,4 +48,3 @@ spec:
       name: http
   selector:
     app: keycloak
-
