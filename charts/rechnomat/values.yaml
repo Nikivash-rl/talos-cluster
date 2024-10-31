@@ -5,7 +5,7 @@ image:
   tag: latest
   pullSecrets:
     name: regcred
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 application:
   name: rechnomat
