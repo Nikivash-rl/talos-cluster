@@ -4,7 +4,7 @@ image:
   repository: nikivash/rechnomat
   tag: latest
   pullSecrets:
-    name: docker-private-image
+    name: regcred
   pullPolicy: IfNotPresent
 
 application:
