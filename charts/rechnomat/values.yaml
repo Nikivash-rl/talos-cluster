@@ -21,7 +21,8 @@ application:
     DB_IT_NAME: "it-db"
     DB_IT_USER: "postgres"
 
-    KEYCLOAK_URL: "http://localhost:9990"
+    spring_security_oauth2_resourceserver_jwt_issuer_uri: "http://keycloak:9990"
+    KEYCLOAK_URL: "http://keycloak:9990"
     KEYCLOAK_ADMIN_USERNAME: "admin"
     KEYCLOAK_REALM: "SpringBootKeycloak"
     KEYCLOAK_CLIENT_ID: "admin-cli"
