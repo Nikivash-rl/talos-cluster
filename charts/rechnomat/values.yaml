@@ -13,7 +13,7 @@ application:
   env:
     DB_DEV_URL: "jdbc:postgresql://postgres-dev"
     DB_DEV_PORT: "5432"
-    DB_DEV_NAME: "dev-db"
+    DB_DEV_NAME: "rechnomat"
     DB_DEV_USER: "postgres"
 
     DB_IT_URL: "jdbc:postgresql://postgres-it"
