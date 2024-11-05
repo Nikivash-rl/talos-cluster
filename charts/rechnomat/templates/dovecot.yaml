@@ -35,6 +35,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: dovecot-pvc
 spec:
+  storageClassName: local-path
   accessModes:
     - ReadWriteOnce
   resources:

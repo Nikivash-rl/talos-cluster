@@ -14,6 +14,8 @@ spec:
       labels:
         app: {{ .Values.application.name }}
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets.name}}
       containers:
         - name: {{ .Values.application.name }}-container
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
@@ -33,8 +35,6 @@ spec:
                   name: rechnomat-secrets
                   key: {{ $key }}
                   {{- end }}
-      imagePullSecrets:
-        - name: {{ .Values.image.pullSecrets.name}}
 
 ---
 apiVersion: v1

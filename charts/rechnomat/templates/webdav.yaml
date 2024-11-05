@@ -46,6 +46,7 @@ kind: PersistentVolumeClaim
 metadata:
   name: webdav-pvc
 spec:
+  storageClassName: local-path
   accessModes:
     - ReadWriteMany
   resources:
