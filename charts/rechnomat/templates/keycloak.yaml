@@ -17,9 +17,14 @@ spec:
       containers:
         - name: keycloak
           image: {{ .Values.keycloak.image }}
+          command:
+            - "/opt/keycloak/bin/kc.sh"
+            - "start-dev"
           ports:
-            - containerPort: 9990
+            - containerPort: {{.Values.application.env.KC_HTTP_PORT}}
           env:
+            - name: KC_HTTP_PORT
+              value: "{{.Values.application.env.KC_HTTP_PORT}}"
             - name: KEYCLOAK_ADMIN
               value: {{ .Values.application.env.KEYCLOAK_ADMIN_USERNAME | quote }}
             - name: KEYCLOAK_ADMIN_PASSWORD
@@ -40,8 +45,8 @@ metadata:
     app: keycloak
 spec:
   ports:
-    - port: 9990
-      targetPort: 9990
+    - port: {{.Values.application.env.KC_HTTP_PORT}}
+      targetPort: {{.Values.application.env.KC_HTTP_PORT}}
       protocol: TCP
       name: http
   selector:
