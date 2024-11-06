@@ -19,8 +19,6 @@ spec:
           image: {{ .Values.keycloak.image }}
           ports:
             - containerPort: 9990
-              hostPort: 9990
-              protocol: TCP
           env:
             - name: KEYCLOAK_ADMIN
               value: {{ .Values.application.env.KEYCLOAK_ADMIN_USERNAME | quote }}
