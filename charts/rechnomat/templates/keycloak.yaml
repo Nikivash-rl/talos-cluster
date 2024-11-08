@@ -22,6 +22,7 @@ spec:
           command:
             - "/opt/keycloak/bin/kc.sh"
             - "start-dev"
+            - "--import-realm"
           ports:
             - containerPort: {{.Values.application.env.KC_HTTP_PORT}}
           env:
