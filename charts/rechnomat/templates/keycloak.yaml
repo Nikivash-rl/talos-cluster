@@ -14,6 +14,8 @@ spec:
       labels:
         app: keycloak
     spec:
+      imagePullSecrets:
+        - name: {{ .Values.image.pullSecrets.name}}
       containers:
         - name: keycloak
           image: {{ .Values.keycloak.image }}
@@ -25,9 +27,9 @@ spec:
           env:
             - name: KC_HTTP_PORT
               value: "{{.Values.application.env.KC_HTTP_PORT}}"
-            - name: KEYCLOAK_ADMIN
+            - name: KC_BOOTSTRAP_ADMIN_USERNAME
               value: {{ .Values.application.env.KEYCLOAK_ADMIN_USERNAME | quote }}
-            - name: KEYCLOAK_ADMIN_PASSWORD
+            - name: KC_BOOTSTRAP_ADMIN_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: rechnomat-secrets

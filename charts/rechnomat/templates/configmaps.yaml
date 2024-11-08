@@ -1,10 +1,9 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: dovecot-config
+  name: keycloak-realm-config
+  labels:
+    app: keycloak
 data:
-  dovecot.conf: |
-    # Ваши настройки Dovecot
-    protocols = imap
-    mail_location = maildir:~/Maildir
-    ssl = no
+  realm-export.json: |-
+{{ .Files.Get "path/to/your/realm-export.json" | indent 4 }}

@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: docker.io/nikivash/rechnomat
+  repository: denktmit.registry.jetbrains.space/p/denktmit-rechnomat/containers/rechnomat:latest
   tag: latest
   pullSecrets:
     name: regcred
@@ -73,7 +73,7 @@ mailpit:
   image: axllent/mailpit
 
 keycloak:
-  image: quay.io/keycloak/keycloak:latest
+  image: denktmit.registry.jetbrains.space/p/denktmit-rechnomat/containers/keycloak:latest
 
 
 
