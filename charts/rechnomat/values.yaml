@@ -1,8 +1,8 @@
 replicaCount: 1
 
 image:
-  repository: denktmit.registry.jetbrains.space/p/denktmit-rechnomat/containers/rechnomat:version-0.38-main
-  tag: latest
+  repository: denktmit.registry.jetbrains.space/p/denktmit-rechnomat/containers/rechnomat
+  tag: version-0.38-main
   pullSecrets:
     name: regcred
   pullPolicy: Always
